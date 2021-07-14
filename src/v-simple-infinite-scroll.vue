@@ -9,21 +9,26 @@
 export default {
     data(){
         return {
-            cargando : false
+            cargando : false,
+            completed : false
         }
     },
     props: {
         distance : {
             type: Number,
             default: 100
+        },
+        loadToFill : {
+            type: Boolean,
+            default: true
         }
     },
     emits: [
         'cargar'
     ],
     mounted(){
-        console.log("hola scroll");
         this.aplicarListener();
+        this.handleScroll();
     },
     unmounted(){
         this.desvincularListener();
@@ -34,7 +39,7 @@ export default {
     },
     methods: {
         handleScroll(){
-			if ( this.$refs.contenedor.getBoundingClientRect().bottom < (window.innerHeight + this.distance)) {
+			if (!this.cargando && this.$refs.contenedor.getBoundingClientRect().bottom < (window.innerHeight + this.distance)) {
 				this.loadMorePosts();
 			}
         },
@@ -45,22 +50,23 @@ export default {
 			window.removeEventListener("scroll", this.handleScroll)
         },
         loadMorePosts(){
-            if(!this.cargando){
-                this.cargando = true;
-                console.log("emitiendo...");
-                this.$emit('cargar', this);
-
-            }
-
+            this.cargando = true;
+            this.$emit('cargar', this);
         },
         loaded(){
+            //waiting 300 ms for items to be rendered
             setTimeout(()=>{
                 this.cargando = false;
-                console.log("cargo!");
+                this.tryToFill();
             }, 300);
         },
         complete(){
-            console.log("ya no hya mas");
+            this.cargando = false;
+            this.completed = true;
+            this.desvincularListener();
+        },
+        tryToFill(){
+            this.handleScroll();
         }
     }
 }

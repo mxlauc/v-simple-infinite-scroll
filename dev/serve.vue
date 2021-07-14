@@ -1,19 +1,17 @@
+<template>
+  <div id="app">
+    <home-component></home-component>
+  </div>
+</template>
+
 <script>
 import { defineComponent } from 'vue';
-import VSimpleInfiniteScroll from '@/v-simple-infinite-scroll.vue';
+import HomeComponent from './HomeComponent.vue';
 
 export default defineComponent({
   name: 'ServeDev',
   components: {
-    VSimpleInfiniteScroll
+    HomeComponent
   }
 });
 </script>
-
-<template>
-  <div id="app">
-    <v-simple-infinite-scroll>
-      hola gg
-    </v-simple-infinite-scroll>
-  </div>
-</template>
