@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3.1.5/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/v-simple-infinite-scroll"></script> 
+    <title>V Simple Infinite Scroll</title>
+    <style>
+        *{
+            font-family: sans-serif;
+        }
+        .square{
+            text-align: center;
+            background-color: #ccc;
+            width: 500px;
+            max-width: 90%;
+            border-radius: 5px;
+            margin: 10px auto;
+            align-items: center;   /* <---- NEW    */
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1 style="text-align: center;">My List</h1>
+        <p style="text-align: center;">
+            Scroll down to see more
+            <br>
+            There's 30 items
+        </p>
+        <v-simple-infinite-scroll @cargar="cargar" :distance="0">
+            <div class="square" v-for="(item, index) in list" v-bind:key="item" :style="{height: item + 'px'}">
+                <div>
+                    <h3 style="margin-top: 0px;">{{index + 1}} Item</h3>    
+                    <span>Height {{item}}px</span>
+                </div>
+            </div>
+            ga
+        </v-simple-infinite-scroll>
+    </div>
+    <script>
+        const Counter = {
+            components:{
+                VSimpleInfiniteScroll,
+            },
+            data() {
+                return {
+                    list: [],
+                }
+            },
+            methods:{
+                cargar(scroll){
+                    this.requestDataFromServer()
+                    .then(response=>{
+                        this.list = this.list.concat(response);
+                        if(this.list.length < 30){
+                            scroll.loaded();
+                        }else{
+                            scroll.complete();
+                        }
+                    });
+                    
+                },
+                async requestDataFromServer(){
+                    let arrayTemp = new Array();
+                    for(let i = 0; i < 3 ; i++){
+                        arrayTemp.push(Math.trunc(Math.random() * 5) * 20 + 100);
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // 3 sec
+                    return arrayTemp;
+                },
+            },
+        }
+
+        Vue.createApp(Counter).mount('#app');
+    </script>
+
+</body>
+</html>
