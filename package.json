@@ -1,19 +1,16 @@
 {
   "name": "v-simple-infinite-scroll",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "",
-
   "main": "dist/v-simple-infinite-scroll.ssr.js",
   "browser": "dist/v-simple-infinite-scroll.esm.js",
   "module": "dist/v-simple-infinite-scroll.esm.js",
   "unpkg": "dist/v-simple-infinite-scroll.min.js",
-
   "files": [
     "dist/*",
     "src/**/*.vue"
   ],
   "sideEffects": false,
-
   "scripts": {
     "serve": "vue-cli-service serve dev/serve.js",
     "build": "cross-env NODE_ENV=production rollup --config build/rollup.config.js",
@@ -21,10 +18,6 @@
     "build:es": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",
     "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife"
   },
-
-  "dependencies": {
-  },
-
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
@@ -36,7 +29,9 @@
     "@vue/cli-plugin-babel": "^4.5.10",
     "@vue/cli-service": "^4.5.10",
     "@vue/compiler-sfc": "^3.0.5",
+    "bootstrap": "^5.0.2",
     "cross-env": "^7.0.3",
+    "masonry-layout": "^4.2.2",
     "minimist": "^1.2.5",
     "postcss": "^8.2.3",
     "rollup": "^2.36.1",

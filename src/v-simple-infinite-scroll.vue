@@ -2,7 +2,7 @@
     <div ref="contenedor">
         <slot></slot>
         <slot name="cargando" v-if="cargando"></slot>
-
+        
     </div>
 </template>
 <script>
@@ -10,7 +10,8 @@ export default {
     data(){
         return {
             cargando : false,
-            completed : false
+            completed : false,
+            bottom: null,
         }
     },
     props: {
@@ -27,6 +28,10 @@ export default {
         'cargar'
     ],
     mounted(){
+        this.bottom = document.querySelector("#v-simple-infinite-scroll-bottom");
+        if(this.bottom == null){
+            this.bottom = this.$refs.contenedor;
+        }
         this.aplicarListener();
         this.handleScroll();
     },
@@ -39,7 +44,7 @@ export default {
     },
     methods: {
         handleScroll(){
-			if (!this.cargando && this.$refs.contenedor.getBoundingClientRect().bottom < (window.innerHeight + this.distance)) {
+			if (!this.cargando && this.bottom.getBoundingClientRect().bottom < (window.innerHeight + this.distance)) {
 				this.loadMorePosts();
 			}
         },
@@ -57,7 +62,9 @@ export default {
             //waiting 300 ms for items to be rendered
             setTimeout(()=>{
                 this.cargando = false;
-                this.tryToFill();
+                if(this.loadToFill){
+                    this.tryToFill();
+                }
             }, 300);
         },
         complete(){
