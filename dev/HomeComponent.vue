@@ -1,6 +1,19 @@
 <template>
+asdfas
+<br><br><br><br><br>
     <div class="container">
-        <v-simple-infinite-scroll @cargar="cargar" :distance="0">
+        <div v-if="true" class="v-simple-infinite-scroll-container shadow-lg" style="border:0px solid black; height: 500px; overflow-y:scroll;">
+            <v-simple-infinite-scroll @load="cargar" :distance="0">
+                <div class="grid-item m-3" v-for="(item, index) in list" v-bind:key="item">
+                    <div class="square" :style="{height: item + 'px'}">
+                        <h3 style="margin-top: 0px;">{{index + 1}} Item</h3>    
+                        <span>Height {{item}}px</span>
+                    </div>
+                </div>
+            </v-simple-infinite-scroll>
+        </div>
+
+        <v-simple-infinite-scroll @load="cargar" :distance="0" v-if="false">
             <div class="row masonry-row">
                 <div class="grid-item col col-12 col-md-6 col-lg-4 col-xl-3 mb-3" v-for="(item, index) in list" v-bind:key="item">
                     <div class="square" :style="{height: item + 'px'}">
@@ -8,7 +21,7 @@
                         <span>Height {{item}}px</span>
                     </div>
                 </div>
-                <div class="grid-item col col-12 col-md-6 col-lg-4 col-xl-3 mb-3" id="v-simple-infinite-scroll-bottom">
+                <div class="grid-item col col-12 col-md-6 col-lg-4 col-xl-3 mb-3 v-simple-infinite-scroll-bottom">
                 </div>
             </div>
             
@@ -40,15 +53,14 @@ export default {
             this.requestDataFromServer()
             .then(response=>{
                 this.list = this.list.concat(response);
-                if(this.list.length < 300){
-                    setTimeout(()=>{
-                        this.aplicarMasonry();
-                    },0);
-                    
+                if(this.list.length < 20){
                     scroll.loaded();
                 }else{
                     scroll.complete();
                 }
+                setTimeout(()=>{
+                    //this.aplicarMasonry();
+                },10);
             });
             
         },

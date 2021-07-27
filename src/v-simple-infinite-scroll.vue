@@ -1,17 +1,19 @@
 <template>
-    <div ref="contenedor">
+    <div ref="container">
         <slot></slot>
-        <slot name="cargando" v-if="cargando"></slot>
-        
+        <div ref="bottom"></div>
     </div>
 </template>
+
 <script>
 export default {
     data(){
         return {
-            cargando : false,
+            loading : false,
             completed : false,
             bottom: null,
+            container: null,
+            scroll: null,
         }
     },
     props: {
@@ -25,59 +27,80 @@ export default {
         }
     },
     emits: [
-        'cargar'
+        'load'
     ],
     mounted(){
-        this.bottom = document.querySelector("#v-simple-infinite-scroll-bottom");
-        if(this.bottom == null){
-            this.bottom = this.$refs.contenedor;
-        }
-        this.aplicarListener();
+        let parentNode = this.$refs.container.parentNode;
+        this.container = parentNode.classList.contains("v-simple-infinite-scroll-container")
+            ? parentNode
+            : window;
+
+        this.bottom = this.$refs.container.querySelector(".v-simple-infinite-scroll-bottom") ?? this.$refs.bottom;
+
+        let thisComponent = this;
+        this.scroll = {
+            loaded(){
+                thisComponent.loaded();
+            },
+            complete(){
+                thisComponent.complete();
+            }
+        };
+
+        this.addListeners();
         this.handleScroll();
     },
     unmounted(){
-        this.desvincularListener();
-    }
-    ,
-    watch: {
-
+        this.removeListeners();
     },
     methods: {
         handleScroll(){
-			if (!this.cargando && this.bottom.getBoundingClientRect().bottom < (window.innerHeight + this.distance)) {
-				this.loadMorePosts();
-			}
+            if(!this.loading && this.isTheBottom()){
+                this.loadMore();
+            }
         },
-        aplicarListener(){
-            window.addEventListener("scroll", this.handleScroll)
+
+        addListeners(){
+            this.container.addEventListener("scroll", this.handleScroll)
         },
-        desvincularListener(){
-			window.removeEventListener("scroll", this.handleScroll)
+
+        removeListeners(){
+			this.container.removeEventListener("scroll", this.handleScroll)
         },
-        loadMorePosts(){
-            this.cargando = true;
-            this.$emit('cargar', this);
+
+        loadMore(){
+            this.loading = true;
+            this.$emit('load', this.scroll);
         },
+
         loaded(){
             //waiting 300 ms for items to be rendered
             setTimeout(()=>{
-                this.cargando = false;
+                this.loading = false;
                 if(this.loadToFill){
                     this.tryToFill();
                 }
             }, 300);
         },
+
         complete(){
-            this.cargando = false;
+            this.removeListeners();
+            this.loading = false;
             this.completed = true;
-            this.desvincularListener();
         },
+
         tryToFill(){
             this.handleScroll();
-        }
+        },
+
+        isTheBottom(){
+            if(this.container == window){
+                return this.bottom.getBoundingClientRect().bottom <= (this.container.innerHeight + this.distance);
+            }else{
+                return this.bottom.getBoundingClientRect().bottom <= (this.container.getBoundingClientRect().bottom + this.distance);
+            }
+        },
+
     }
 }
 </script>
-<style scoped>
-
-</style>
